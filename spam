@@ -1,0 +1,106 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace DeckofCards
+{
+  class MainClass
+  {
+    
+    public static List<string> usedCards = new List<string>();
+    public static Random numbers = new Random();
+    public static string Input = "";
+    public static int totalCards = 0, round = 1, cardsDealt = 0;
+    public static void Main()
+    {
+      int NumberofPlayers = 0, HandSize = 0;
+      
+      Console.WriteLine("Press 1 to Deal \nPress 2 to Quit");
+      Input = Console.ReadLine();
+      if (Input == "1")
+      {
+        Console.WriteLine("Number of players:");
+        Int32.TryParse(Console.ReadLine(), out NumberofPlayers);
+        Console.WriteLine("Hand size:");
+        Int32.TryParse(Console.ReadLine(), out HandSize);
+        if (NumberofPlayers * HandSize > 52)
+        {
+          Console.WriteLine("Not enough cards");
+          Main();
+        }
+        TheDeal(NumberofPlayers, HandSize);
+      }
+      else
+      {
+        Console.WriteLine("Game Over!");
+      }
+    }
+    public static void TheDeal(int players, int hand)
+    {
+      int k = 0;
+      cardsDealt = totalCards;
+      totalCards += players * hand;
+      
+      if (totalCards <= 52)
+      {
+        for (int i = 0; i < players; i++)
+        {
+          int PlayerNumber = i + 1;
+          Console.WriteLine("Player {0}", PlayerNumber);
+          for (int j = k; j < hand; j++)
+          {
+            usedCards = noRepeat(MainDeck());
+            Console.WriteLine(usedCards[cardsDealt + j + (i * players)]);
+          }
+        }
+        Console.WriteLine("\nDeal Again? Y/N");
+        if(Console.ReadLine().ToUpper() == "Y")
+        {
+          round++;
+          Main();
+        }
+        else
+        {
+          Console.WriteLine("Good Game!");
+        }
+      }
+      else
+      {
+        Console.WriteLine("Out of Cards! New game? Y/N");
+        if (Console.ReadLine().ToUpper() == "Y")
+        {
+          totalCards = 0;
+          Main();
+        }
+        else
+        {
+          Console.WriteLine("Good Game!");
+        }
+      }
+    }
+    public static List<string> noRepeat(List<string> Deck)
+    {
+      Deck = MainDeck();
+      for (int i = 0; i < Deck.Count; i++)
+      {
+        Input = Deck[numbers.Next(0, Deck.Count)];
+        usedCards.Add(Input);
+      }
+      return usedCards;
+    }
+    public static List<string> MainDeck()
+    {
+      string[] cardValue = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
+      string[] cardSuit = {"Spade", "Clover", "Diamond", "Heart"};
+      List<string> Deck = new List<string>();
+      for (int i = 0; i < cardValue.Length; i++)
+      {
+        for (int j = 0; j < cardSuit.Length; j++)
+        {
+          Deck.Add(String.Format("{0} of {1}", cardValue[i], cardSuit[j]));
+        }
+      }
+      return Deck;
+    }
+  }
+}
