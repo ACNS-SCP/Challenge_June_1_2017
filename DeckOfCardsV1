@@ -1,0 +1,284 @@
+using System;
+using System.Collections;
+
+public class Program
+{
+	public static ArrayList arlDeck = new ArrayList();
+	public static int intPlayers;
+	public static int intCardsLeft;
+	public static int[, ] intPlayersCards;
+	public static int[] intNumberOfCardsInHand;
+	public static int intTurnCounter;
+	public static void Main()
+	{
+		string strInput = "";
+		arlDeck.Clear();
+		intTurnCounter = 0;
+		Console.WriteLine("Type 'S' to start game, or 'X' to exit the program.");
+		strInput = Console.ReadLine();
+		if (strInput.ToUpper() == "S")
+		{
+			PlayerCount();
+			DeckGenerator();
+			HandSize();
+		}
+		else if (strInput.ToUpper() == "X")
+		{
+			Console.WriteLine("Good Bye");
+		}
+		else if (strInput.Trim() == "")
+		{
+			Console.WriteLine("You do relize you actually need to type something, yes?");
+			Main();
+		}
+		else
+		{
+			Console.WriteLine("OK this aint rocket science. Either type an 'S' or an 'X'.");
+			Main();
+		}
+	}
+
+	public static void DeckGenerator()
+	{
+		int intCount = 0;
+		Random ranNumber = new Random();
+		int intCardValue;
+		while (intCount <= 51)
+		{
+			intCardValue = ranNumber.Next(0, 52);
+			if (arlDeck.Contains(intCardValue) == false)
+			{
+				arlDeck.Add(intCardValue);
+				intCount++;
+			}
+		}
+	}
+
+	public static void PlayerCount()
+	{
+		Console.WriteLine("Type how many players will be playing(2-8 players)");
+		if (Int32.TryParse(Console.ReadLine(), out intPlayers) == false)
+		{
+			Console.WriteLine("What I meant was for you to type a 'Whole', 'Positive', 'Number' that can be from the number 2 to the number 8. No Letters and no decimals. Try Again.");
+			PlayerCount();
+		}
+		else
+		{
+			if (intPlayers < 2 || intPlayers > 8)
+			{
+				Console.WriteLine("Try Again. It has to be a positive whole number from 2 to 8.");
+				PlayerCount();
+			}
+
+			intNumberOfCardsInHand = new int[intPlayers];
+		}
+	}
+
+	public static void HandSize()
+	{
+		int intSizeOfFirstHand;
+		int intMaxCardsInHand;
+		intMaxCardsInHand=52/intPlayers;
+		Console.WriteLine("Choose how big hand size shall be.(Must be at least 1 and no bigger than "+intMaxCardsInHand.ToString()+")");
+		if (Int32.TryParse(Console.ReadLine(), out intSizeOfFirstHand) == false)
+		{
+			Console.WriteLine("Try Again. It has to be a positive whole number from 1 to at most "+intMaxCardsInHand.ToString()+".");
+			HandSize();
+		}
+		else
+		{
+			if (intSizeOfFirstHand < 1 || intSizeOfFirstHand > intMaxCardsInHand)
+			{
+				HandSize();
+			}
+
+			FirstHands(intSizeOfFirstHand);
+		}
+	}
+
+	public static void FirstHands(int intSizeOfHand)
+	{
+		intPlayersCards = new int[intPlayers, 48];
+		for (int i = 0; i < intPlayers; i++)
+		{
+			intNumberOfCardsInHand[i] = intSizeOfHand;
+			for (int j = 0; j < intSizeOfHand; j++)
+			{
+				intPlayersCards[i, j] = Convert.ToInt32(arlDeck[0]);
+				arlDeck.RemoveAt(0);
+			}
+		}
+		intCardsLeft=52-(intPlayers*intSizeOfHand);
+		DisplayHands();
+		if (intCardsLeft == 0)
+		{
+			Console.WriteLine("The deck is empty. Restarting game.");
+			Main();
+		}
+		else
+		{
+			PlayersTurn();
+		}
+	}
+
+	public static void DisplayHands()
+	{
+		string strSuite;
+		string strCardType = "";
+		for (int i = 0; i < intPlayers; i++)
+		{
+			Console.WriteLine("Player " + Convert.ToString(i + 1));
+			for (int j = 0; j < intNumberOfCardsInHand[i]; j++)
+			{
+				if (intPlayersCards[i, j] >= 0 && intPlayersCards[i, j] <= 12)
+				{
+					strSuite = "Hearts";
+				}
+				else if (intPlayersCards[i, j] >= 13 && intPlayersCards[i, j] <= 25)
+				{
+					strSuite = "Clubs";
+				}
+				else if (intPlayersCards[i, j] >= 26 && intPlayersCards[i, j] <= 38)
+				{
+					strSuite = "Diamonds";
+				}
+				else
+				{
+					strSuite = "Spades";
+				}
+
+				if (intPlayersCards[i, j] == 0 || intPlayersCards[i, j] == 13 || intPlayersCards[i, j] == 26 || intPlayersCards[i, j] == 39)
+				{
+					strCardType = "Ace";
+				}
+				else if (intPlayersCards[i, j] == 1 || intPlayersCards[i, j] == 14 || intPlayersCards[i, j] == 27 || intPlayersCards[i, j] == 40)
+				{
+					strCardType = "Two";
+				}
+				else if (intPlayersCards[i, j] == 2 || intPlayersCards[i, j] == 15 || intPlayersCards[i, j] == 28 || intPlayersCards[i, j] == 41)
+				{
+					strCardType = "Three";
+				}
+				else if (intPlayersCards[i, j] == 3 || intPlayersCards[i, j] == 16 || intPlayersCards[i, j] == 29 || intPlayersCards[i, j] == 42)
+				{
+					strCardType = "Four";
+				}
+				else if (intPlayersCards[i, j] == 4 || intPlayersCards[i, j] == 17 || intPlayersCards[i, j] == 30 || intPlayersCards[i, j] == 43)
+				{
+					strCardType = "Five";
+				}
+				else if (intPlayersCards[i, j] == 5 || intPlayersCards[i, j] == 18 || intPlayersCards[i, j] == 31 || intPlayersCards[i, j] == 44)
+				{
+					strCardType = "Six";
+				}
+				else if (intPlayersCards[i, j] == 6 || intPlayersCards[i, j] == 19 || intPlayersCards[i, j] == 32 || intPlayersCards[i, j] == 45)
+				{
+					strCardType = "Seven";
+				}
+				else if (intPlayersCards[i, j] == 7 || intPlayersCards[i, j] == 20 || intPlayersCards[i, j] == 33 || intPlayersCards[i, j] == 46)
+				{
+					strCardType = "Eight";
+				}
+				else if (intPlayersCards[i, j] == 8 || intPlayersCards[i, j] == 21 || intPlayersCards[i, j] == 34 || intPlayersCards[i, j] == 47)
+				{
+					strCardType = "Nine";
+				}
+				else if (intPlayersCards[i, j] == 9 || intPlayersCards[i, j] == 22 || intPlayersCards[i, j] == 35 || intPlayersCards[i, j] == 48)
+				{
+					strCardType = "Ten";
+				}
+				else if (intPlayersCards[i, j] == 10 || intPlayersCards[i, j] == 23 || intPlayersCards[i, j] == 36 || intPlayersCards[i, j] == 49)
+				{
+					strCardType = "Jack";
+				}
+				else if (intPlayersCards[i, j] == 11 || intPlayersCards[i, j] == 24 || intPlayersCards[i, j] == 37 || intPlayersCards[i, j] == 50)
+				{
+					strCardType = "Queen";
+				}
+				else if (intPlayersCards[i, j] == 12 || intPlayersCards[i, j] == 25 || intPlayersCards[i, j] == 38 || intPlayersCards[i, j] == 51)
+				{
+					strCardType = "King";
+				}
+
+				Console.WriteLine(strCardType + " of " + strSuite);
+			}
+		}
+	}
+
+	public static void PlayersTurn()
+	{
+		string strContinue;
+		Console.WriteLine("Player " + Convert.ToString(intTurnCounter + 1) + " type 'D' to get cards and go to next players turn, or 'Q' to go back to main menu.");
+		strContinue = Console.ReadLine();
+		if (strContinue.ToUpper() == "D")
+		{
+			Dealer();
+		}
+		else if (strContinue.ToUpper() == "Q")
+		{
+			Main();
+		}
+		else
+		{
+			Console.WriteLine("D is your only choice for going to the next players turn. Live with it.");
+			PlayersTurn();
+		}
+	}
+
+	public static void TurnTracker()
+	{
+		intTurnCounter++;
+		if (intTurnCounter == intPlayers)
+		{
+			intTurnCounter = 0;
+		}
+	}
+
+	public static void Dealer()
+	{
+		int intCardsDealt;
+		Console.WriteLine("Type the number of cards you want dealt.(0 to as many as you want)");
+		if (Int32.TryParse(Console.ReadLine(), out intCardsDealt) == false)
+		{
+			Console.WriteLine("WHY!!!");
+			Dealer();
+		}
+		else if (intCardsDealt < 0)
+		{
+			Console.WriteLine("You cannot deal a negative number of cards.");
+			Dealer();
+		}
+		else if (intCardsDealt == 0)
+		{
+			TurnTracker();
+			DisplayHands();
+			PlayersTurn();
+		}
+		else
+		{
+			for (int intDealNewCards = 0; intDealNewCards < intCardsDealt; intDealNewCards++)
+			{
+				intNumberOfCardsInHand[intTurnCounter]++;
+				intPlayersCards[intTurnCounter, intNumberOfCardsInHand[intTurnCounter] - 1] = Convert.ToInt32(arlDeck[0]);
+				arlDeck.RemoveAt(0);
+				intCardsLeft--;
+				if (intCardsLeft == 0)
+				{
+					break;
+				}
+			}
+
+			DisplayHands();
+			TurnTracker();
+			if (intCardsLeft == 0)
+			{
+				Console.WriteLine("The deck is empty. Restarting game.");
+				Main();
+			}
+			else
+			{
+				PlayersTurn();
+			}
+		}
+	}
+}
