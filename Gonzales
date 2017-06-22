@@ -1,0 +1,117 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+namespace Pokerface
+{
+    class Program
+    {
+        public static string[] cards = {"Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"};
+        public static string[] suits = {"C", "D", "H", "S"};
+        public static List<string> ShuffledDeck = new List<string>();
+        public static int handsPlaying = 0, handSize = 0, cardNumber = 1;   
+        
+        public static void Main()
+        {
+            Shuffle();
+           // Random cardValue = new Random();
+           // Random suitValue = new Random();  
+            
+            {
+              cardNumber = 1;
+              Console.WriteLine("How many hands are to be dealt?");
+              string handsAmount = Console.ReadLine();
+              int.TryParse(handsAmount, out handsPlaying);
+              Console.WriteLine("How many cards per hand?");
+              string cardsPerHand = Console.ReadLine();
+              int.TryParse(cardsPerHand, out handSize);
+               
+              DealCards(handsPlaying, handSize);
+                
+            }
+        }
+
+        public static void DealCards(int handsPlaying, int handSize)
+          {
+            for (int hands = 0; hands <handsPlaying; hands++)
+              {
+                  
+                 for (int i = 0; i < handSize; i++)
+                  {
+                  
+                   Console.Write(ShuffledDeck[cardNumber-1]);
+                   cardNumber ++;
+                   OutOfCards(cardNumber);
+                   
+               
+                  }
+                Console.WriteLine("");
+                Console.WriteLine("");
+              }
+              if (cardNumber <52)
+                {
+                  Console.WriteLine("Continue game? Y/N");
+                }
+                  if (Console.ReadLine().ToUpper() == "Y")
+                    {
+                      Main();
+                    }
+                  else 
+                    {
+                      Console.WriteLine("K Bye");
+                    }
+                
+          }
+          
+          
+        public static void OutOfCards(int cardNumber) 
+        {
+           if (cardNumber > 52)
+                   {
+                     Console.WriteLine("");
+                     Console.WriteLine("Out of Cards, Deal Again? (Y/N)");
+                     cardNumber = 1;
+                     if (Console.ReadLine().ToUpper() == "Y")
+                     {
+                       Main();
+                       
+                     }
+                     
+                     else if (Console.ReadLine().ToUpper() == "N")
+                     {
+                     return;
+                     }
+                     else
+                     {
+                       Console.WriteLine("Invalid Option");
+                       OutOfCards(cardNumber);
+                     }
+                   }
+        }
+          
+        public static List<string> Shuffle()
+        {
+          
+           for (int c = 0; c < cards.Length; c++)
+           {
+             for (int s = 0; s < suits.Length; s++)
+             {
+               ShuffledDeck.Add(String.Format("{0} of {1} ", cards[c], suits[s]));
+             }
+           }
+           
+           for (int n = ShuffledDeck.Count - 1; n > 0; --n)
+            {
+              Random r = new Random();
+              int k = r.Next(n+1);
+              string temp = ShuffledDeck[n];
+              ShuffledDeck[n] = ShuffledDeck[k];
+              ShuffledDeck[k] = temp;
+            }
+            
+           return ShuffledDeck;
+           
+        }
+
+    }
+}
